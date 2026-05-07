@@ -26,6 +26,7 @@
 ;;   d         disable display
 ;;   e         enable display
 ;;   C-c C-c   apply with xrandr
+;;   C-c C-k   revert: discard unapplied changes (re-read from xrandr)
 ;;   C-c C-s   save current as autorandr profile
 ;;   C-c C-l   load autorandr profile
 ;;   C-c C-d   delete saved autorandr profile
@@ -208,6 +209,16 @@ crash."
   (when (get-buffer darr-buffer-name)
     (darr--render)))
 
+(defun darr-revert ()
+  "Discard unapplied edits and re-read state from xrandr.
+Asks for confirmation when there are unapplied changes."
+  (interactive)
+  (when (and darr--dirty
+             (not (yes-or-no-p "Discard unapplied changes? ")))
+    (user-error "Cancelled"))
+  (darr-refresh)
+  (message "Reverted to xrandr state"))
+
 ;;; Buffer rendering
 
 (defvar darr-mode-map
@@ -227,6 +238,7 @@ crash."
     (define-key m "d" #'darr-disable)
     (define-key m "e" #'darr-enable)
     (define-key m (kbd "C-c C-c") #'darr-apply)
+    (define-key m (kbd "C-c C-k") #'darr-revert)
     (define-key m (kbd "C-c C-s") #'darr-save-profile)
     (define-key m (kbd "C-c C-l") #'darr-load-profile)
     (define-key m (kbd "C-c C-d") #'darr-delete-profile)
@@ -337,7 +349,7 @@ No-op when there's nothing enabled with geometry."
               (propertize
                (concat "n/p select  •  hjkl move  •  r/R res  F rate  o rotate"
                        "  •  P primary  d disable  e enable\n"
-                       "C-c C-c apply  •  C-c C-s save  •  C-c C-l load  •  C-c C-d delete  •  g refresh  •  ? help\n")
+                       "C-c C-c apply  •  C-c C-k revert  •  C-c C-s save  •  C-c C-l load  •  C-c C-d delete  •  g refresh  •  ? help\n")
                'face 'shadow)))
     (darr--goto-selected)))
 

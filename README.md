@@ -54,7 +54,7 @@ Displays
   DP-1    (disconnected)
 
 n/p select  •  hjkl move  •  r/R res  F rate  o rotate  •  P primary  d disable  e enable
-C-c C-c apply  •  C-c C-s save  •  C-c C-l load  •  C-c C-d delete  •  g refresh  •  ? help
+C-c C-c apply  •  C-c C-k revert  •  C-c C-s save  •  C-c C-l load  •  C-c C-d delete  •  g refresh  •  ? help
 ```
 
 The buffer shows `[unapplied]` after any change until you `C-c C-c`.
@@ -72,6 +72,7 @@ The buffer shows `[unapplied]` after any change until you `C-c C-c`.
 | `d` / `e` | Disable / enable display (enable seeds sensible defaults)        |
 | `g`       | Refresh from `xrandr --query`                                    |
 | `C-c C-c` | Apply current layout via `xrandr`                                |
+| `C-c C-k` | Revert: discard unapplied changes, re-read state from xrandr     |
 | `C-c C-s` | Save current layout as autorandr profile (with overwrite prompt) |
 | `C-c C-l` | Load autorandr profile (with completion)                         |
 | `C-c C-d` | Delete saved autorandr profile                                   |
