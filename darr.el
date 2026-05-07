@@ -126,18 +126,49 @@ Each function is called with the output name."
 
 ;;; xrandr parsing
 
+(defun darr--install-hint (program)
+  "Best-effort installation hint for PROGRAM, formatted for a warning."
+  (pcase program
+    ("xrandr"
+     (concat
+      "Install one of:\n"
+      "  Arch:           pacman -S xorg-xrandr\n"
+      "  Debian/Ubuntu:  apt install x11-xserver-utils\n"
+      "  Fedora:         dnf install xorg-x11-server-utils"))
+    ("autorandr"
+     (concat
+      "Install:\n"
+      "  Arch:           pacman -S autorandr\n"
+      "  Debian/Ubuntu:  apt install autorandr\n"
+      "  Fedora:         dnf install autorandr"))
+    (_ "Install it via your distro's package manager.")))
+
+(defun darr--missing-tool-error (program)
+  "Pretty-print a missing-tool message and abort with a `user-error'.
+Pops a `*Warnings*' buffer with install hints + the customization
+variable to use if the binary lives at a non-standard path; raises a
+short `user-error' so the calling command aborts cleanly."
+  (let* ((known (member program '("xrandr" "autorandr")))
+         (custom-var (and known (format "darr-%s-command" program))))
+    (display-warning
+     'darr
+     (concat
+      (format "Required external program not found: %s\n\n" program)
+      (darr--install-hint program) "\n\n"
+      (when custom-var
+        (format "Or set `%s' if it lives at a non-standard path."
+                custom-var)))
+     :error)
+    (user-error "darr: %s not found in `exec-path' (see *Warnings*)"
+                program)))
+
 (defun darr--call (program &rest args)
   "Run PROGRAM with ARGS, return stdout as string. Errors signal.
 Refuses to even try if PROGRAM isn't on `exec-path' so the failure
-mode is a clear `user-error' rather than an opaque `call-process'
-crash."
+mode is a friendly `*Warnings*' popup with install hints rather than an
+opaque `call-process' crash."
   (unless (executable-find program)
-    (user-error
-     "%s not found in `exec-path' — install it (or set `darr-%s-command')"
-     program
-     (cond ((string= program "xrandr")    "xrandr")
-           ((string= program "autorandr") "autorandr")
-           (t program))))
+    (darr--missing-tool-error program))
   (with-temp-buffer
     (let ((exit (apply #'call-process program nil t nil args)))
       (unless (zerop exit)
