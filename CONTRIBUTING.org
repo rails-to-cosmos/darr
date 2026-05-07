@@ -1,0 +1,44 @@
+#+TITLE: Contributing to darr
+
+* License
+
+By contributing, you agree your changes are licensed under GPL-3.0-or-later, the same license as the rest of the package.
+
+* Development
+
+Run the full check suite (lint, byte-compile, tests) before sending a patch:
+
+#+begin_src sh
+make
+#+end_src
+
+This runs:
+
+- ~package-lint~ on ~darr.el~
+- byte-compilation with warnings as errors
+- ~ert~ tests in ~darr-tests.el~
+- ~checkdoc~ on docstrings
+
+A patch that makes ~make~ fail will not be merged.
+
+* Attribution for AI-generated code
+
+If a commit contains code that was generated or substantially shaped by an LLM, add an =Assisted-by:= trailer to the commit message naming the model. Example:
+
+#+begin_example
+Add foo command
+
+Assisted-by: Claude Opus 4.7 (Anthropic)
+#+end_example
+
+This mirrors [[https://github.com/melpa/melpa/blob/master/CONTRIBUTING.org#attribution-for-ai-generated-code][MELPA's policy]]: trivial autocomplete (a few tokens at a time) does not need attribution; a function or non-trivial block drafted by a model does.
+
+When in doubt, attribute.
+
+* Reporting issues
+
+Open an issue at https://github.com/rails-to-cosmos/darr/issues with:
+
+- your Emacs version (~M-x emacs-version~)
+- your display server (X11 / Wayland) and ~xrandr~ / ~autorandr~ versions
+- the contents of ~*Displays*~ when the bug appears, and the corresponding ~xrandr --query~ output
