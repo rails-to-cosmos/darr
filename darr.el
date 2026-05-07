@@ -43,54 +43,66 @@
 
 (defcustom darr-xrandr-command "xrandr"
   "Path to the xrandr binary."
-  :type 'string)
+  :type 'string
+  :group 'darr)
 
 (defcustom darr-autorandr-command "autorandr"
   "Path to the autorandr binary."
-  :type 'string)
+  :type 'string
+  :group 'darr)
 
 (defcustom darr-buffer-name "*Displays*"
   "Name of the displays layout buffer."
-  :type 'string)
+  :type 'string
+  :group 'darr)
 
 (defcustom darr-canvas-width 60
   "Width (in characters) of the layout minimap drawn above the rows."
-  :type 'integer)
+  :type 'integer
+  :group 'darr)
 
 (defcustom darr-on-connect-hook nil
   "Hook run when a new display is connected.
 Each function is called with the output name."
-  :type 'hook)
+  :type 'hook
+  :group 'darr)
 
 (defcustom darr-on-disconnect-hook nil
   "Hook run when a display is disconnected."
-  :type 'hook)
+  :type 'hook
+  :group 'darr)
 
 ;;; Faces
 
 (defface darr-box
   '((t :inherit default :box (:line-width 1)))
-  "Face for the display rectangle.")
+  "Face for the display rectangle."
+  :group 'darr)
 
 (defface darr-primary
   '((t :inherit success :weight bold))
-  "Face for the primary marker.")
+  "Face for the primary marker."
+  :group 'darr)
 
 (defface darr-disabled
   '((t :inherit shadow :strike-through t))
-  "Face for disabled displays.")
+  "Face for disabled displays."
+  :group 'darr)
 
 (defface darr-name
   '((t :inherit font-lock-keyword-face))
-  "Face for the output name.")
+  "Face for the output name."
+  :group 'darr)
 
 (defface darr-resolution
   '((t :inherit font-lock-string-face))
-  "Face for the resolution string.")
+  "Face for the resolution string."
+  :group 'darr)
 
 (defface darr-selected
   '((t :inherit highlight :weight bold :extend t))
-  "Face applied to the line of the currently-selected display.")
+  "Face applied to the line of the currently-selected display."
+  :group 'darr)
 
 ;;; Data model
 
