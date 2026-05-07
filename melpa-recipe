@@ -1,0 +1,5 @@
+;; Submission recipe for melpa/melpa.
+;; Copy this into melpa/melpa/recipes/darr in a PR (file name: just "darr").
+(darr :fetcher github
+      :repo "rails-to-cosmos/darr"
+      :files (:defaults))
