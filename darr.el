@@ -344,7 +344,7 @@ No-op when there's nothing enabled with geometry."
 (defun darr--render-output (out)
   "Render a single OUTPUT struct as a labeled row."
   (let* ((selected (string= (darr-output-name out) darr--selected))
-         (sigil    (if selected "▶ " "  "))
+         (sigil    (if selected "* " "  "))
          (name     (darr-output-name out))
          (conn     (darr-output-connected out))
          (enabled  (darr-output-enabled out))
@@ -435,10 +435,19 @@ No-op when there's nothing enabled with geometry."
 
 ;;; Mutations
 
-(defun darr--current ()
+(defun darr--current (&optional action)
+  "Return the currently-selected `darr-output' struct.
+If ACTION is non-nil, also signal a friendly `user-error' when the
+selected display is disconnected (so commands that don't make sense on
+absent hardware fail quietly instead of crashing).  ACTION is the verb
+shown in the message, e.g. \"cycle resolution\"."
   (darr--ensure-selected)
-  (or (darr--find darr--selected)
-      (user-error "No display selected")))
+  (let ((cur (or (darr--find darr--selected)
+                 (user-error "No display selected"))))
+    (when (and action (not (darr-output-connected cur)))
+      (user-error "Cannot %s — %s is disconnected"
+                  action (darr-output-name cur)))
+    cur))
 
 (defun darr--mark-dirty ()
   (setq darr--dirty t)
@@ -447,7 +456,7 @@ No-op when there's nothing enabled with geometry."
 (defun darr-toggle-primary ()
   "Toggle primary flag on the selected display."
   (interactive)
-  (let ((cur (darr--current)))
+  (let ((cur (darr--current "mark primary")))
     (dolist (out darr--state)
       (setf (darr-output-primary out) nil))
     (setf (darr-output-primary cur) t)
@@ -456,7 +465,7 @@ No-op when there's nothing enabled with geometry."
 (defun darr-disable ()
   "Disable the selected display (--off on apply)."
   (interactive)
-  (setf (darr-output-enabled (darr--current)) nil)
+  (setf (darr-output-enabled (darr--current "disable")) nil)
   (darr--mark-dirty))
 
 (defun darr-enable ()
@@ -465,7 +474,7 @@ If the display has no current mode/rate/geometry (e.g. it was --off, or
 just plugged in), seed sensible defaults: first available mode + rate,
 and place it to the right of the rightmost enabled display."
   (interactive)
-  (let ((cur (darr--current)))
+  (let ((cur (darr--current "enable")))
     (setf (darr-output-enabled cur) t)
     (unless (darr-output-current-mode cur)
       (when-let* ((modes (darr-output-modes cur))
@@ -493,7 +502,7 @@ and place it to the right of the rightmost enabled display."
 (defun darr-cycle-rotation ()
   "Cycle rotation: normal -> left -> inverted -> right -> normal."
   (interactive)
-  (let* ((cur (darr--current))
+  (let* ((cur (darr--current "cycle rotation"))
          (cycle '(normal left inverted right))
          (next (or (cadr (memq (darr-output-rotation cur) cycle))
                    (car cycle))))
@@ -502,7 +511,7 @@ and place it to the right of the rightmost enabled display."
 
 (defun darr--cycle-resolution-by (direction)
   "Move the selected display's mode forward (DIRECTION +1) or back (-1)."
-  (let* ((cur (darr--current))
+  (let* ((cur (darr--current "cycle resolution"))
          (modes (mapcar #'car (darr-output-modes cur))))
     (unless modes (user-error "No modes available for %s"
                               (darr-output-name cur)))
@@ -525,19 +534,25 @@ and place it to the right of the rightmost enabled display."
 (defun darr-cycle-rate ()
   "Cycle the refresh rate within the current resolution."
   (interactive)
-  (let* ((cur (darr--current))
+  (let* ((cur (darr--current "cycle refresh rate"))
          (mode (darr-output-current-mode cur))
-         (rates (cdr (assoc mode (darr-output-modes cur))))
-         (idx (cl-position (darr-output-current-rate cur) rates))
-         (next (nth (mod (1+ (or idx -1)) (length rates)) rates)))
-    (setf (darr-output-current-rate cur) next)
-    (darr--mark-dirty)))
+         (rates (cdr (assoc mode (darr-output-modes cur)))))
+    (unless rates
+      (user-error "No refresh rates known for %s — is the display enabled?"
+                  (darr-output-name cur)))
+    (let* ((idx (cl-position (darr-output-current-rate cur) rates))
+           (next (nth (mod (1+ (or idx -1)) (length rates)) rates)))
+      (setf (darr-output-current-rate cur) next)
+      (darr--mark-dirty))))
 
 (defun darr--move (dir)
   "Move selected display relative to neighbor in DIR ('left/'right/'up/'down)."
-  (let* ((cur (darr--current))
+  (let* ((cur (darr--current "move"))
          (others (cl-remove cur darr--state))
          (anchor (car (cl-remove-if-not #'darr-output-enabled others))))
+    (unless (darr-output-geometry cur)
+      (user-error "Cannot move %s — display is not enabled (no geometry)"
+                  (darr-output-name cur)))
     (unless anchor
       (user-error "No other enabled display to position relative to"))
     (let* ((g (darr-output-geometry anchor))

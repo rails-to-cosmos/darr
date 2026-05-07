@@ -49,9 +49,9 @@ Displays
 │                              ││                          │
 └──────────────────────────────┘└──────────────────────────┘
 
-▶ eDP-1   2160x1350 @ 60Hz  +0+0  ★ primary
-   HDMI-1  1920x1080 @ 60Hz  +2160+0
-   DP-1    (disconnected)
+* eDP-1   2160x1350 @ 60Hz  +0+0  ★ primary
+  HDMI-1  1920x1080 @ 60Hz  +2160+0
+  DP-1    (disconnected)
 
 n/p select  •  hjkl move  •  r/R res  F rate  o rotate  •  P primary  d disable  e enable
 C-c C-c apply  •  C-c C-s save  •  C-c C-l load  •  C-c C-d delete  •  g refresh  •  ? help
