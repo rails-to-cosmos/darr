@@ -8,9 +8,13 @@ No native code, pure Elisp.
 
 ### From a clone
 
+```sh
+git clone https://github.com/rails-to-cosmos/darr.git
+```
+
 ```elisp
 (use-package darr
-  :load-path "~/sync/stuff/darr"
+  :load-path "/path/to/darr"
   :commands (darr darr-show darr-watch-mode)
   :bind ("C-x y d" . darr))
 ```
@@ -46,8 +50,8 @@ Displays
 └──────────────────────────────┘└──────────────────────────┘
 
 ▶ eDP-1   2160x1350 @ 60Hz  +0+0  ★ primary
-  HDMI-1  1920x1080 @ 60Hz  +2160+0
-  DP-1    (disconnected)
+   HDMI-1  1920x1080 @ 60Hz  +2160+0
+   DP-1    (disconnected)
 
 n/p select  •  hjkl move  •  r/R res  F rate  o rotate  •  P primary  d disable  e enable
 C-c C-c apply  •  C-c C-s save  •  C-c C-l load  •  C-c C-d delete  •  g refresh  •  ? help
@@ -57,21 +61,21 @@ The buffer shows `[unapplied]` after any change until you `C-c C-c`.
 
 ### Keys
 
-| Key       | Action |
-|-----------|--------|
-| `n` / `p` | Select next / previous display |
+| Key       | Action                                                           |
+|-----------|------------------------------------------------------------------|
+| `n` / `p` | Select next / previous display                                   |
 | `h j k l` | Move selected display left/down/up/right of an enabled neighbour |
-| `r` / `R` | Cycle resolution forward / backward |
-| `F`       | Cycle refresh rate (within current resolution) |
-| `o`       | Cycle rotation: normal → left → inverted → right |
-| `P`       | Mark display as primary |
-| `d` / `e` | Disable / enable display (enable seeds sensible defaults) |
-| `g`       | Refresh from `xrandr --query` |
-| `C-c C-c` | Apply current layout via `xrandr` |
+| `r` / `R` | Cycle resolution forward / backward                              |
+| `F`       | Cycle refresh rate (within current resolution)                   |
+| `o`       | Cycle rotation: normal → left → inverted → right                 |
+| `P`       | Mark display as primary                                          |
+| `d` / `e` | Disable / enable display (enable seeds sensible defaults)        |
+| `g`       | Refresh from `xrandr --query`                                    |
+| `C-c C-c` | Apply current layout via `xrandr`                                |
 | `C-c C-s` | Save current layout as autorandr profile (with overwrite prompt) |
-| `C-c C-l` | Load autorandr profile (with completion) |
-| `C-c C-d` | Delete saved autorandr profile |
-| `?`       | Help |
+| `C-c C-l` | Load autorandr profile (with completion)                         |
+| `C-c C-d` | Delete saved autorandr profile                                   |
+| `?`       | Help                                                             |
 
 ## Hot-plug watcher
 
